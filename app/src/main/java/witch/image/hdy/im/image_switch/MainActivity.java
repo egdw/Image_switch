@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
         banner.setAdapter(new TestNomalAdapter(pics), new PageChangeListner() {
             @Override
             public void onChange(int postion) {
-                System.out.println(postion);
-                textView.setText(pics.get(postion - 1).getName());
+//                System.out.println(postion);
+                textView.setText(pics.get(postion).getName());
             }
         });
     }
@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
                 Pic pic = new Pic(substring, s);
                 pics.add(pic);
             }
-            System.out.println(pics);
             return pics;
         }
         return null;

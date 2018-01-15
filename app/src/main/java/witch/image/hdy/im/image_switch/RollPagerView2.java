@@ -150,11 +150,11 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
             RollPagerView2 rollPagerView = mRollPagerViewWeakReference.get();
             int cur = rollPagerView.getViewPager().getCurrentItem() + 1;
             PageChangeListner pageChangeListner = (PageChangeListner) msg.obj;
-            if (pageChangeListner != null) {
-                pageChangeListner.onChange(cur);
-            }
             if (cur >= rollPagerView.mAdapter.getCount()) {
                 cur = 0;
+            }
+            if (pageChangeListner != null) {
+//                pageChangeListner.onChange(cur);
             }
             rollPagerView.getViewPager().setCurrentItem(cur);
             rollPagerView.mHintViewDelegate.setCurrentPosition(cur, (HintView) rollPagerView.mHintView);
@@ -378,6 +378,7 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
         mViewPager.setAdapter(adapter);
         mViewPager.addOnPageChangeListener(this);
         mAdapter = adapter;
+        this.pageChangeListner = pageChangeListner;
         dataSetChanged(pageChangeListner);
     }
 
@@ -397,10 +398,6 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
     }
 
     private PageChangeListner pageChangeListner = null;
-
-    public void setOnPageChangeListener(PageChangeListner changeListener) {
-        this.pageChangeListner = changeListener;
-    }
 
     public void dataSetChanged(PageChangeListner pageChangeListner) {
         if (mHintView != null) {
@@ -427,6 +424,7 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
     public void onPageScrollStateChanged(int arg0) {
         // TODO Auto-generated method stub
 
+
     }
 
     @Override
@@ -438,6 +436,7 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
     @Override
     public void onPageSelected(int arg0) {
         mHintViewDelegate.setCurrentPosition(arg0, (HintView) mHintView);
+        pageChangeListner.onChange(arg0);
     }
 
 }
