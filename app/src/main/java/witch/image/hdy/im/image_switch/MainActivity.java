@@ -40,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
         banner = (RollPagerView2) this.findViewById(R.id.banner);
         textView = (TextView) this.findViewById(R.id.textView);
         final ArrayList<Pic> pics = getPic();
+        if (pics != null && pics.size() != 0) {
+            textView.setText(pics.get(0).getName());
+        }
         banner.setAdapter(new TestNomalAdapter(pics), new PageChangeListner() {
             @Override
             public void onChange(int postion) {
