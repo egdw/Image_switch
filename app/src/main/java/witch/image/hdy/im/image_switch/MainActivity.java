@@ -47,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChange(int postion) {
 //                System.out.println(postion);
-                textView.setText(pics.get(postion).getName());
+                if (pics != null && pics.size() != 0) {
+                    textView.setText(pics.get(postion).getName());
+                }
             }
         });
     }
