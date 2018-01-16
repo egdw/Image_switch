@@ -156,6 +156,8 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
             if (pageChangeListner != null) {
 //                pageChangeListner.onChange(cur);
             }
+//            ViewPager viewPager = rollPagerView.getViewPager();
+//            viewPager.settr
             rollPagerView.getViewPager().setCurrentItem(cur);
             rollPagerView.mHintViewDelegate.setCurrentPosition(cur, (HintView) rollPagerView.mHintView);
             if (rollPagerView.mAdapter.getCount() <= 1) rollPagerView.stopPlay();
@@ -265,7 +267,9 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
                     new Interpolator() {
                         public float getInterpolation(float t) {
                             t -= 1.0f;
+//                            t -= 0.1f;
                             return t * t * t * t * t + 1.0f;
+//                            return  t * t * t + 0.1f;
                         }
                     }) {
 

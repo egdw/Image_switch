@@ -5,8 +5,8 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "witch.image.hdy.im.image_switch"
-        minSdkVersion 19
-        targetSdkVersion 25
+        minSdkVersion 12
+        targetSdkVersion 14
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

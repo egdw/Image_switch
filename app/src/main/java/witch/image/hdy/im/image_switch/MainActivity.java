@@ -1,10 +1,7 @@
 package witch.image.hdy.im.image_switch;
 
-import android.Manifest;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -18,12 +15,15 @@ import android.widget.TextView;
 import com.jude.rollviewpager.adapter.StaticPagerAdapter;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private RollPagerView2 banner;
     private TextView textView;
+    private int muisic_index = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +36,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void init() {
-        isGrantExternalRW();
+//        isGrantExternalRW();
         banner = (RollPagerView2) this.findViewById(R.id.banner);
+        banner.setAnimationDurtion(1500);
         textView = (TextView) this.findViewById(R.id.textView);
         final ArrayList<Pic> pics = getPic();
         if (pics != null && pics.size() != 0) {
@@ -52,6 +53,62 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        playMusic();
+    }
+
+    public void playMusic() {
+        final File path = getSDPath();
+        if (path.exists()) {
+            File file = new File(path.getAbsolutePath() + File.separator + "picSave");
+            if (!file.exists()) {
+                boolean mkdirs = file.mkdirs();
+            }
+            String[] list = file.list(new FilenameFilter() {
+                @Override
+                public boolean accept(File pathname, String name) {
+                    String upperCase = name.toUpperCase();
+                    if (upperCase.endsWith(".MP3") || upperCase.endsWith(".WMV")) {
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            System.out.println("list-size:" + list.length);
+            if (list.length > 0) {
+                play(path, list);
+            }
+
+//            return pics;
+        }
+//        return null;
+    }
+
+    private void play(final File path, final String[] list) {
+        if (muisic_index < list.length - 1) {
+            muisic_index++;
+        } else {
+            muisic_index = 0;
+        }
+        MediaPlayer mp = new MediaPlayer();
+//                MediaPlayer mp = MediaPlayer.create(this, null);
+        try {
+            mp.setDataSource(path.getAbsolutePath() + File.separator + "picSave" + File.separator + list[muisic_index]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            mp.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mp.start();
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+                play(path, list);
+            }
+        });
     }
 
     public ArrayList<Pic> getPic() {
@@ -62,7 +119,16 @@ public class MainActivity extends AppCompatActivity {
             if (!file.exists()) {
                 boolean mkdirs = file.mkdirs();
             }
-            String[] list = file.list();
+            String[] list = file.list(new FilenameFilter() {
+                @Override
+                public boolean accept(File pathname, String name) {
+                    String upperCase = name.toUpperCase();
+                    if (upperCase.endsWith(".JPG") || upperCase.endsWith(".JPEG") || upperCase.endsWith(".BMP") || upperCase.endsWith(".PNG")) {
+                        return true;
+                    }
+                    return false;
+                }
+            });
             for (String s : list) {
                 int indexOf = s.lastIndexOf(".");
                 String substring = s.substring(0, indexOf);
@@ -97,7 +163,8 @@ public class MainActivity extends AppCompatActivity {
                 view.setImageResource(imgs2[position]);
             } else {
                 File path = getSDPath();
-                view.setImageDrawable(Drawable.createFromPath(path.getAbsolutePath() + File.separator + "picSave" + File.separator + imgs[position]));
+                view.setImageBitmap(ImageUtils.getSmallBitmap(path.getAbsolutePath() + File.separator + "picSave" + File.separator + imgs[position], 1920, 1080));
+//                view.setImageDrawable(Drawable.createFromPath(path.getAbsolutePath() + File.separator + "picSave" + File.separator + imgs[position]));
             }
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
             view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -132,18 +199,18 @@ public class MainActivity extends AppCompatActivity {
         return sdDir;
     }
 
-    public boolean isGrantExternalRW() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && MainActivity.this.checkSelfPermission(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-            this.requestPermissions(new String[]{
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-            }, 1);
-
-            return false;
-        }
-
-        return true;
-    }
+//    public boolean isGrantExternalRW() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && MainActivity.this.checkSelfPermission(
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//
+//            this.requestPermissions(new String[]{
+//                    Manifest.permission.READ_EXTERNAL_STORAGE,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+//            }, 1);
+//
+//            return false;
+//        }
+//
+//        return true;
+//    }
 }

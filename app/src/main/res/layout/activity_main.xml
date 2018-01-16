@@ -14,20 +14,21 @@
         android:id="@+id/banner"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:rollviewpager_play_delay="3000"
+        app:rollviewpager_play_delay="5000"
         android:textAlignment="center"
         android:layout_weight="0.90">
 
     </witch.image.hdy.im.image_switch.RollPagerView2>
 
     <TextView
-        android:text="简介"
+        android:text=""
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.1"
         android:id="@+id/textView"
         android:gravity="center"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
 </LinearLayout>
