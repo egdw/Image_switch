@@ -7,28 +7,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-    tools:context="witch.image.hdy.im.image_switch.MainActivity"
-    android:weightSum="1">
+    android:weightSum="1"
+    tools:context="witch.image.hdy.im.image_switch.MainActivity">
 
     <witch.image.hdy.im.image_switch.RollPagerView2
         android:id="@+id/banner"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:rollviewpager_play_delay="5000"
+        android:layout_height="match_parent"
         android:textAlignment="center"
-        android:layout_weight="0.90">
+        app:rollviewpager_play_delay="5000">
 
     </witch.image.hdy.im.image_switch.RollPagerView2>
 
     <TextView
-        android:text=""
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.1"
         android:id="@+id/textView"
-        android:gravity="center"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:gravity="center"
+        android:text=""
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
 </LinearLayout>

@@ -1,9 +1,13 @@
 package witch.image.hdy.im.image_switch;
 
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +16,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.jude.rollviewpager.adapter.StaticPagerAdapter;
+import com.jude.rollviewpager.adapter.DynamicPagerAdapter;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,9 +44,10 @@ public class MainActivity extends AppCompatActivity {
     public void init() {
 //        isGrantExternalRW();
         banner = (RollPagerView2) this.findViewById(R.id.banner);
-        banner.setAnimationDurtion(1500);
         textView = (TextView) this.findViewById(R.id.textView);
         final ArrayList<Pic> pics = getPic();
+        banner.setHintView(new TextHintView2(this, pics));
+        banner.setAnimationDurtion(1500);
         if (pics != null && pics.size() != 0) {
             textView.setText(pics.get(0).getName());
         }
@@ -111,11 +118,84 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static void convertToJpg(String pngFilePath, String jpgFilePath) {
+        Bitmap bitmap = BitmapFactory.decodeFile(pngFilePath);
+        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(jpgFilePath))) {
+            if (bitmap.compress(Bitmap.CompressFormat.PNG, 80, bos)) {
+                bos.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void ConvertPic() {
+        final File path = getSDPath();
+        File file = new File(path.getAbsolutePath() + File.separator + "picSave");
+        final String[] list = file.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File pathname, String name) {
+                String upperCase = name.toUpperCase();
+                if (upperCase.endsWith(".JPG") || upperCase.endsWith(".JPEG") || upperCase.endsWith(".PNG") || upperCase.endsWith(".BMP")) {
+                    return true;
+                }
+                return false;
+            }
+        });
+        for (String l : list) {
+            Bitmap smallBitmap = ImageUtils.getSmallBitmap(path.getAbsolutePath() + File.separator + "picSave" + File.separator + l, 720, 480);
+            try {
+                saveBitmap(smallBitmap, l);
+                System.out.println("save");
+            } catch (Exception e) {
+//                e.printStackTrace();
+            }
+        }
+
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                for (String l : list2) {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//                        System.out.println("asdasdas");
+//                        int i = l.lastIndexOf(".");
+//                        String temp = l.substring(0, i) + ".png";
+//                        convertToJpg(path.getAbsolutePath() + File.separator + "picSave" + File.separator + l, path.getAbsolutePath() + File.separator + "picSave" + File.separator + temp);
+//                        new File(path.getAbsolutePath() + File.separator + "picSave" + File.separator + l).delete();
+//                    }
+//                }
+//            }
+//        }).start();
+    }
+
+    private void saveBitmap(Bitmap bitmap, String bitName) throws IOException {
+        int i = bitName.lastIndexOf(".");
+        bitName = bitName.substring(0, i) + ".png";
+        final File path = getSDPath();
+        File file = new File(path.getAbsolutePath() + File.separator + "picSave" + File.separator + bitName);
+        if (file.exists()) {
+            file.delete();
+        }
+        FileOutputStream out;
+        try {
+            out = new FileOutputStream(file);
+            if (bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)) {
+                out.flush();
+                out.close();
+            }
+        } catch (Exception e) {
+            System.out.println("error");
+        }
+    }
+
     public ArrayList<Pic> getPic() {
-        File path = getSDPath();
+        final File path = getSDPath();
         ArrayList<Pic> pics = new ArrayList<>();
         if (path.exists()) {
             File file = new File(path.getAbsolutePath() + File.separator + "picSave");
+//            ConvertPic();
             if (!file.exists()) {
                 boolean mkdirs = file.mkdirs();
             }
@@ -123,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public boolean accept(File pathname, String name) {
                     String upperCase = name.toUpperCase();
-                    if (upperCase.endsWith(".JPG") || upperCase.endsWith(".JPEG") || upperCase.endsWith(".BMP") || upperCase.endsWith(".PNG")) {
+                    if (upperCase.endsWith(".PNG")) {
                         return true;
                     }
                     return false;
@@ -140,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    private class TestNomalAdapter extends StaticPagerAdapter {
+    private class TestNomalAdapter extends DynamicPagerAdapter {
 
         private String[] imgs = null;
         private int[] imgs2 = {R.drawable.pic1, R.drawable.pic2, R.drawable.pic3, R.drawable.pic4, R.drawable.pic5};
@@ -159,6 +239,8 @@ public class MainActivity extends AppCompatActivity {
         public View getView(ViewGroup container, int position) {
 //            System.out.println("sadasd");
             ImageView view = new ImageView(container.getContext());
+            view.setAdjustViewBounds(true);
+            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
             if (imgs == null) {
                 view.setImageResource(imgs2[position]);
             } else {

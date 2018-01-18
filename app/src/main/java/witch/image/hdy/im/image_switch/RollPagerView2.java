@@ -19,7 +19,6 @@ import android.view.animation.Interpolator;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 
-import com.jude.rollviewpager.HintView;
 import com.jude.rollviewpager.OnItemClickListener;
 import com.jude.rollviewpager.Util;
 import com.jude.rollviewpager.adapter.LoopPagerAdapter;
@@ -62,20 +61,20 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
     private Timer timer;
 
     public interface HintViewDelegate {
-        void setCurrentPosition(int position, HintView hintView);
+        void setCurrentPosition(int position, HintView2 hintView);
 
-        void initView(int length, int gravity, HintView hintView);
+        void initView(int length, int gravity, HintView2 hintView);
     }
 
     private HintViewDelegate mHintViewDelegate = new HintViewDelegate() {
         @Override
-        public void setCurrentPosition(int position, HintView hintView) {
+        public void setCurrentPosition(int position, HintView2 hintView) {
             if (hintView != null)
                 hintView.setCurrent(position);
         }
 
         @Override
-        public void initView(int length, int gravity, HintView hintView) {
+        public void initView(int length, int gravity, HintView2 hintView) {
             if (hintView != null)
                 hintView.initView(length, gravity);
         }
@@ -121,7 +120,7 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
         mViewPager.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         addView(mViewPager);
         type.recycle();
-        initHint(new ColorPointHintView(getContext(), Color.parseColor("#E3AC42"), Color.parseColor("#88ffffff")));
+//        initHint(new ColorPointHintView(getContext(), Color.parseColor("#E3AC42"), Color.parseColor("#88ffffff")));
         //手势处理
         mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -159,7 +158,7 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
 //            ViewPager viewPager = rollPagerView.getViewPager();
 //            viewPager.settr
             rollPagerView.getViewPager().setCurrentItem(cur);
-            rollPagerView.mHintViewDelegate.setCurrentPosition(cur, (HintView) rollPagerView.mHintView);
+            rollPagerView.mHintViewDelegate.setCurrentPosition(cur, (HintView2) rollPagerView.mHintView);
             if (rollPagerView.mAdapter.getCount() <= 1) rollPagerView.stopPlay();
 
         }
@@ -220,12 +219,12 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
     }
 
 
-    private void initHint(HintView hintview) {
+    private void initHint(HintView2 hintview) {
         if (mHintView != null) {
             removeView(mHintView);
         }
 
-        if (hintview == null || !(hintview instanceof HintView)) {
+        if (hintview == null || !(hintview instanceof HintView2)) {
             return;
         }
 
@@ -248,7 +247,7 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
         gd.setAlpha(alpha);
         mHintView.setBackgroundDrawable(gd);
 
-        mHintViewDelegate.initView(mAdapter == null ? 0 : mAdapter.getCount(), gravity, (HintView) mHintView);
+        mHintViewDelegate.initView(mAdapter == null ? 0 : mAdapter.getCount(), gravity, (HintView2) mHintView);
     }
 
 
@@ -342,7 +341,7 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
      */
     public void setHintAlpha(int alpha) {
         this.alpha = alpha;
-        initHint((HintView) mHintView);
+        initHint((HintView2) mHintView);
     }
 
     /**
@@ -352,7 +351,7 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
      *
      * @param hintview
      */
-    public void setHintView(HintView hintview) {
+    public void setHintView(HintView2 hintview) {
 
         if (mHintView != null) {
             removeView(mHintView);
@@ -405,8 +404,8 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
 
     public void dataSetChanged(PageChangeListner pageChangeListner) {
         if (mHintView != null) {
-            mHintViewDelegate.initView(mAdapter.getCount(), gravity, (HintView) mHintView);
-            mHintViewDelegate.setCurrentPosition(mViewPager.getCurrentItem(), (HintView) mHintView);
+            mHintViewDelegate.initView(mAdapter.getCount(), gravity, (HintView2) mHintView);
+            mHintViewDelegate.setCurrentPosition(mViewPager.getCurrentItem(), (HintView2) mHintView);
         }
         startPlay(pageChangeListner);
     }
@@ -439,7 +438,7 @@ public class RollPagerView2 extends RelativeLayout implements OnPageChangeListen
 
     @Override
     public void onPageSelected(int arg0) {
-        mHintViewDelegate.setCurrentPosition(arg0, (HintView) mHintView);
+        mHintViewDelegate.setCurrentPosition(arg0, (HintView2) mHintView);
         pageChangeListner.onChange(arg0);
     }
 
